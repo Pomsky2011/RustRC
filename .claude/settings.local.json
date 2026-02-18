@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git -C /home/alexanderrw/Documents/Code/RustRC branch -m main)",
+      "WebFetch(domain:www.gnu.org)",
+      "Bash(curl:*)"
+    ]
+  }
+}

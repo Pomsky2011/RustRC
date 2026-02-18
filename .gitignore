@@ -1,0 +1,34 @@
+# Rust build artifacts
+/target/
+**/*.rs.bk
+
+# Cargo lock for libraries (keep for binaries)
+# Cargo.lock
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.*
+
+# Test artifacts
+/tmp/
+/test_output/
+*.log
+core
+*.dump
+
+# Coverage
+*.profraw
+*.profdata
+/coverage/
+tarpaulin-report.html
+
+# OS
+Thumbs.db
