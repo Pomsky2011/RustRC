@@ -19,7 +19,9 @@
       "Bash(bash -n /home/alexanderrw/Documents/Code/RustRC/tests/common.sh)",
       "Bash(bash -n:*)",
       "Bash(bash -n /home/alexanderrw/Documents/Code/RustRC/tests/netbsd_init.sh)",
-      "Bash(bash -n /home/alexanderrw/Documents/Code/RustRC/tests/bare_metal.sh)"
+      "Bash(bash -n /home/alexanderrw/Documents/Code/RustRC/tests/bare_metal.sh)",
+      "Bash(bash /home/alexanderrw/Documents/Code/RustRC/tests/linux_init.sh)",
+      "Bash(bash /home/alexanderrw/Documents/Code/RustRC/tests/run_all.sh)"
     ]
   }
 }
