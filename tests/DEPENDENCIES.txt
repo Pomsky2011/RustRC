@@ -1,0 +1,105 @@
+DEPENDENCIES — BSD Init Boot Tests
+===================================
+
+Each BSD test runs in three phases:
+  1. cargo check  — type-check the source for the target (no linker needed)
+  2. cargo build  — produce a static binary for the target
+  3. boot test    — inject binary into a disk image and boot in QEMU
+
+Phases 1 and 3 are skipped automatically if prerequisites are missing.
+The disk images must be placed in tests/.cache/ before the boot tests run.
+
+
+────────────────────────────────────────────────────────────────────────
+TARGET: FreeBSD  (x86_64-unknown-freebsd, Rust Tier 2)
+────────────────────────────────────────────────────────
+
+Phase 1 – cargo check
+  rustup target add x86_64-unknown-freebsd
+
+Phase 2 – cargo build  (choose one)
+  a) cargo-zigbuild + zig  [recommended — handles sysroot automatically]
+       cargo install cargo-zigbuild
+       pacman -S zig
+
+  b) ld.lld  [already present on this machine]
+       No extra install needed.
+       NOTE: without a FreeBSD sysroot this will fail at link time.
+             cargo-zigbuild is the reliable option.
+
+Phase 3 – boot test
+  libguestfs  (for injecting the binary into the disk image)
+    pacman -S libguestfs
+
+  FreeBSD disk image → tests/.cache/freebsd.qcow2
+    curl -L https://download.freebsd.org/releases/VM-IMAGES/14.2-RELEASE/amd64/Latest/FreeBSD-14.2-RELEASE-amd64.qcow2.xz \
+      | xz -d > tests/.cache/freebsd.qcow2
+    (~1 GB download, ~5 GB decompressed)
+
+
+────────────────────────────────────────────────────────────────────────
+TARGET: OpenBSD  (x86_64-unknown-openbsd, Rust Tier 3)
+────────────────────────────────────────────────────────
+
+Tier 3 means no prebuilt std — cargo check and cargo build both require
+special tooling.  Choose one of the two options below.
+
+Phase 1 + 2 – compile + build  (choose one)
+  a) cargo-zigbuild + zig  [recommended — bundles sysroots for Tier 3]
+       cargo install cargo-zigbuild
+       pacman -S zig
+
+  b) Rust nightly + -Zbuild-std  [compiles std from source]
+       rustup toolchain install nightly
+       rustup component add rust-src --toolchain nightly
+       (no explicit target add needed; -Zbuild-std handles it)
+
+Phase 3 – boot test
+  libguestfs
+    pacman -S libguestfs
+
+  OpenBSD disk image → tests/.cache/openbsd.qcow2
+    # The OpenBSD install image is a raw disk; download and rename directly:
+    curl -L https://cdn.openbsd.org/pub/OpenBSD/7.6/amd64/install76.img \
+      -o tests/.cache/openbsd.qcow2
+    # If qemu reports format issues, convert explicitly:
+    # qemu-img convert -f raw -O qcow2 install76.img tests/.cache/openbsd.qcow2
+    (~700 MB download)
+
+
+────────────────────────────────────────────────────────────────────────
+TARGET: NetBSD  (x86_64-unknown-netbsd, Rust Tier 2)
+────────────────────────────────────────────────────────
+
+Phase 1 – cargo check
+  rustup target add x86_64-unknown-netbsd
+
+Phase 2 – cargo build  (choose one)
+  a) cargo-zigbuild + zig  [recommended]
+       cargo install cargo-zigbuild
+       pacman -S zig
+
+  b) ld.lld  [already present on this machine]
+       No extra install needed.
+       NOTE: same sysroot caveat as FreeBSD above.
+
+Phase 3 – boot test
+  libguestfs
+    pacman -S libguestfs
+
+  NetBSD disk image → tests/.cache/netbsd.qcow2
+    curl -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.1/images/NetBSD-10.1-amd64.img.gz \
+      | gunzip > tests/.cache/netbsd.raw
+    qemu-img convert -f raw -O qcow2 tests/.cache/netbsd.raw tests/.cache/netbsd.qcow2
+    rm tests/.cache/netbsd.raw
+    (~500 MB download)
+
+
+────────────────────────────────────────────────────────────────────────
+Quick install for everything at once (Arch / Artix)
+────────────────────────────────────────────────────────────────────────
+
+  sudo pacman -S libguestfs zig xorriso
+  cargo install cargo-zigbuild
+  rustup target add x86_64-unknown-freebsd x86_64-unknown-netbsd
+  # OpenBSD is Tier 3 — no rustup target add needed with zigbuild

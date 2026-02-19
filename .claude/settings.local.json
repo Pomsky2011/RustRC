@@ -6,7 +6,20 @@
       "WebFetch(domain:www.gnu.org)",
       "Bash(curl:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(qemu-system-x86_64:*)",
+      "Bash(rustup target list:*)",
+      "Bash(RUSTFLAGS=\"-C target-feature=+crt-static\" cargo build:*)",
+      "Bash(ldd:*)",
+      "Bash(cpio:*)",
+      "Bash(gzip:*)",
+      "Bash(bsdtar:*)",
+      "Bash(cargo zigbuild:*)",
+      "Bash(chmod:*)",
+      "Bash(bash -n /home/alexanderrw/Documents/Code/RustRC/tests/common.sh)",
+      "Bash(bash -n:*)",
+      "Bash(bash -n /home/alexanderrw/Documents/Code/RustRC/tests/netbsd_init.sh)",
+      "Bash(bash -n /home/alexanderrw/Documents/Code/RustRC/tests/bare_metal.sh)"
     ]
   }
 }
