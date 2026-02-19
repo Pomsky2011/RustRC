@@ -33,3 +33,8 @@ tarpaulin-report.html
 
 # OS
 Thumbs.db
+
+
+# Added by cargo
+
+/target
