@@ -1,40 +1,118 @@
-# Rust build artifacts
+# Rust
 /target/
 **/*.rs.bk
+*.pdb
 
-# Cargo lock for libraries (keep for binaries)
+# Cargo
+# Cargo.lock is kept for binaries; uncomment below for library crates
 # Cargo.lock
 
-# IDE / editor
+# IDE / Editor
 .claude/
 .idea/
 .vscode/
 *.swp
 *.swo
+*.swa
 *~
-.DS_Store
+*.orig
+*.rej
+*.bak
+\#*\#
+.#*
+*.iml
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+nbproject/
+.komodoproject
+.komodo/
 
-# Environment
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Environment / Secrets
 .env
 .env.*
+!.env.example
+*.secret
+*.secrets
+secrets/
+credentials
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+id_ecdsa
+*.pub
 
-# Test artifacts
+# Logs & Debug
+*.log
+*.log.*
+logs/
+*.dump
+core
+core.*
+vgcore.*
+callgrind.out.*
+cachegrind.out.*
+kcachegrind/
+
+# Test / Coverage artifacts
 /tmp/
 /test_output/
-*.log
-core
-*.dump
-
-# Coverage
 *.profraw
 *.profdata
 /coverage/
 tarpaulin-report.html
+lcov.info
+*.gcno
+*.gcda
+*.gcov
 
-# OS
-Thumbs.db
+# Profiling
+*.dtrace
+*.strace
+perf.data
+perf.data.old
+flamegraph.svg
+*.folded
 
+# Build system / CI artifacts
+/dist/
+/out/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
 
-# Added by cargo
+# Packaging
+*.tar.gz
+*.tgz
+*.zip
+*.deb
+*.rpm
+*.snap
+*.AppImage
 
-/target
+# Misc
+.cache/
+.tmp/
+scratch/
+notes/
+TODO.local
