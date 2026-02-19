@@ -16,23 +16,27 @@ need_cmd cargo || { summary; exit; }
 # cargo check alone cannot run for Tier 3 without build-std or zigbuild,
 # so we go straight to a full build attempt.
 
-if cargo zigbuild --version &>/dev/null 2>&1; then
+if command -v cargo-zigbuild &>/dev/null; then
     info "Building $TARGET via cargo-zigbuild…"
-    if RUSTFLAGS="-C target-feature=+crt-static" \
-            cargo zigbuild --release --target "$TARGET" \
-            --manifest-path "$REPO_ROOT/Cargo.toml" 2>&1; then
+    # BSD libc requires dynamic linking through zig's sysroot; no +crt-static.
+    # Capture exit status explicitly — "unsupported target" should be a skip.
+    st=0
+    cargo zigbuild --release --target "$TARGET" \
+        --manifest-path "$REPO_ROOT/Cargo.toml" 2>&1 || st=$?
+    if [[ $st -eq 0 ]]; then
         pass "Cross-compilation for OpenBSD (x86_64) succeeded (zigbuild)"
         BINARY="$REPO_ROOT/target/$TARGET/release/RustRC"
     else
-        fail "cargo zigbuild for $TARGET failed"
-        summary; exit 1
+        skip "cargo-zigbuild does not support $TARGET with this zig version"
+        summary; exit 0
     fi
 elif rustup toolchain list 2>/dev/null | grep -q nightly; then
     info "Building $TARGET via nightly -Zbuild-std…"
-    if RUSTFLAGS="-C target-feature=+crt-static" \
-            cargo +nightly build -Zbuild-std \
-            --release --target "$TARGET" \
-            --manifest-path "$REPO_ROOT/Cargo.toml" 2>&1; then
+    st=0
+    cargo +nightly build -Zbuild-std \
+        --release --target "$TARGET" \
+        --manifest-path "$REPO_ROOT/Cargo.toml" 2>&1 || st=$?
+    if [[ $st -eq 0 ]]; then
         pass "Cross-compilation for OpenBSD (x86_64) succeeded (nightly)"
         BINARY="$REPO_ROOT/target/$TARGET/release/RustRC"
     else

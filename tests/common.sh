@@ -5,6 +5,9 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CACHE_DIR="$REPO_ROOT/tests/.cache"
 TIMEOUT=30
 
+# Non-interactive bash doesn't source ~/.bashrc, so ~/.cargo/bin is absent.
+export PATH="$HOME/.cargo/bin:$PATH"
+
 mkdir -p "$CACHE_DIR"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
@@ -54,9 +57,10 @@ build_cross() {
     local env_var="CARGO_TARGET_$(echo "$target" | tr '[:lower:]-' '[:upper:]_')_LINKER"
     local st=0
     info "Cross-compiling for $target…"
-    if cargo zigbuild --version &>/dev/null 2>&1; then
-        RUSTFLAGS="-C target-feature=+crt-static" \
-            cargo zigbuild --release --target "$target" \
+    if command -v cargo-zigbuild &>/dev/null; then
+        # BSD libc requires dynamic linking through zig's sysroot; +crt-static
+        # is incompatible here and causes a hard error from the linker.
+        cargo zigbuild --release --target "$target" \
             --manifest-path "$REPO_ROOT/Cargo.toml" 2>&1 || st=$?
     elif command -v ld.lld &>/dev/null; then
         RUSTFLAGS="-C target-feature=+crt-static" \
