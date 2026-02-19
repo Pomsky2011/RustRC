@@ -4,3 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+
+[profile.release]
+opt-level   = "z"   # optimise for size over speed
+codegen-units = 1   # single unit — better dead-code elimination
+panic       = "abort"  # drop unwinding machinery (~50 KB)
+strip       = true  # strip symbols; debug info goes in a separate file if needed
+# lto = true is intentionally omitted: it is incompatible with cargo-zigbuild
+# (which passes -C embed-bitcode=no).  Enable manually for non-zigbuild builds.

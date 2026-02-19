@@ -36,13 +36,22 @@ need_target() {
     skip "rustup target not installed: $1 — run: rustup target add $1"; return 1
 }
 
-# Build RustRC for the host with a statically linked CRT.
+# Build RustRC as a statically linked binary for the host.
+# Prefers musl via cargo-zigbuild (~380 KB) over glibc +crt-static (~1.4 MB).
 # Sets BINARY to the resulting path.
 build_static() {
-    info "Building (host, static CRT)…"
-    RUSTFLAGS="-C target-feature=+crt-static" \
-        cargo build --release --manifest-path "$REPO_ROOT/Cargo.toml" 2>&1
-    BINARY="$REPO_ROOT/target/release/RustRC"
+    if command -v cargo-zigbuild &>/dev/null; then
+        info "Building (musl static via zigbuild)…"
+        cargo-zigbuild zigbuild --release \
+            --target x86_64-unknown-linux-musl \
+            --manifest-path "$REPO_ROOT/Cargo.toml" 2>&1
+        BINARY="$REPO_ROOT/target/x86_64-unknown-linux-musl/release/RustRC"
+    else
+        info "Building (glibc static — install cargo-zigbuild for a smaller binary)…"
+        RUSTFLAGS="-C target-feature=+crt-static" \
+            cargo build --release --manifest-path "$REPO_ROOT/Cargo.toml" 2>&1
+        BINARY="$REPO_ROOT/target/release/RustRC"
+    fi
 }
 
 # Cross-compile RustRC for target $1.
