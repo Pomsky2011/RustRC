@@ -21,7 +21,16 @@
       "Bash(bash -n /home/alexanderrw/Documents/Code/RustRC/tests/netbsd_init.sh)",
       "Bash(bash -n /home/alexanderrw/Documents/Code/RustRC/tests/bare_metal.sh)",
       "Bash(bash /home/alexanderrw/Documents/Code/RustRC/tests/linux_init.sh)",
-      "Bash(bash /home/alexanderrw/Documents/Code/RustRC/tests/run_all.sh)"
+      "Bash(bash /home/alexanderrw/Documents/Code/RustRC/tests/run_all.sh)",
+      "Bash(echo:*)",
+      "Bash(bash --norc --noprofile -c 'echo $PATH')",
+      "Bash(bash -c:*)",
+      "Bash(zig targets:*)",
+      "Bash(python3:*)",
+      "Bash(cargo-zigbuild zigbuild:*)",
+      "Bash(zig version:*)",
+      "Bash(~/.cargo/bin/cargo-zigbuild zigbuild:*)",
+      "Bash(requires dynamic linking\"\\).:*)"
     ]
   }
 }
