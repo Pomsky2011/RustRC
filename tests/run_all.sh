@@ -21,9 +21,9 @@ for script in "${SCRIPTS[@]}"; do
     echo
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     if bash "$TESTS_DIR/$script"; then
-        ((overall_pass++))
+        overall_pass=$((overall_pass + 1))
     else
-        ((overall_fail++))
+        overall_fail=$((overall_fail + 1))
     fi
 done
 
