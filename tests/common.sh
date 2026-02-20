@@ -96,16 +96,23 @@ make_initramfs() {
 }
 
 # Boot kernel + initramfs in QEMU; return 0 iff $3 appears in output.
-# Output is captured to a variable first — piping grep directly would cause
-# QEMU to receive SIGPIPE when grep exits early, making pipefail report failure
-# even when the expected string was found.
+# Serial output goes to a temp file rather than stdio: when timeout sends
+# SIGTERM to kill a guest that runs forever, QEMU dies without flushing
+# its stdio buffers, so $() capture misses the output.  File writes via
+# write(2) land in the kernel page cache and survive the kill intact.
 linux_qemu_boot() {
-    local kernel="$1" initrd="$2" want="$3" out
-    out=$(timeout "$TIMEOUT" qemu-system-x86_64 \
+    local kernel="$1" initrd="$2" want="$3"
+    local logfile; logfile=$(mktemp)
+    timeout "$TIMEOUT" qemu-system-x86_64 \
         -kernel "$kernel" -initrd "$initrd" \
         -append "console=ttyS0 quiet" \
-        -nographic -m 256M -no-reboot 2>&1) || true
-    grep -qF "$want" <<< "$out"
+        -display none -monitor none \
+        -serial "file:$logfile" \
+        -m 256M -no-reboot >/dev/null 2>&1 || true
+    local st=0
+    grep -qF "$want" "$logfile" || st=$?
+    rm -f "$logfile"
+    return $st
 }
 
 # Boot a GRUB ISO via BIOS CD; return 0 iff $2 appears in output.
